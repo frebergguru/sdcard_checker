@@ -222,3 +222,8 @@ Always double-check the device node with `sdcheck list` / `lsblk` before running
   no loop device). Handy for development/CI:
   `truncate -s 256M card.img && sdcheck device ./card.img --yes --full --iops`.
   Real block devices still require removable + root as usual.
+
+## License
+
+This project is licensed under the **GNU General Public License v3.0** (or, at
+your option, any later version). See [LICENSE](LICENSE) for the full text.
