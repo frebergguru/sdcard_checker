@@ -99,4 +99,6 @@ jobs:
           files: |
             *.AppImage
             sdcheck-*-x86_64.tar.gz
+          body_path: packaging/release-notes.md   # explains the assets on the Releases page
+          append_body: true                        # then append the auto-generated changelog
           generate_release_notes: true
