@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * Shared safety gate for destructive raw-device operations (test + format).
  * Refuses unless the caller confirmed, is root, and the target is a whole-disk

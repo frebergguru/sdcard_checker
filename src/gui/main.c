@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * sdcheck-gui — GTK4 front-end.
  *

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /* Small shared helpers: option defaults, speed-class mapping, name lookups. */
 #include "sdcheck/sdcheck.h"
 

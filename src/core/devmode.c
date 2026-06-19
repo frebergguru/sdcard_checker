@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * Raw-device test (DESTRUCTIVE, needs root).
  *

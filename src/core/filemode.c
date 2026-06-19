@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * File-based test (safe, no root): write sequential pattern files into a
  * mounted card's free space until full, then read them back and verify.

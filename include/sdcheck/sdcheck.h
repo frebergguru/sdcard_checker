@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * sdcheck — SD/USB flash card authenticity checker (core library)
  *

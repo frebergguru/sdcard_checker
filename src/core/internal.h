@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /* Internal helpers shared across the core library (not part of public API). */
 #ifndef SDCHECK_INTERNAL_H
 #define SDCHECK_INTERNAL_H

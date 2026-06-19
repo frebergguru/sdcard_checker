@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * sdcheck_run_auto — "test, then make it usable" in one destructive op.
  *

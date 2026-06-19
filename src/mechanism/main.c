@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * sdcheck-mechanism — privileged D-Bus system service (Tier 3).
  *

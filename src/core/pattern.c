@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #include "pattern.h"
 
 /* splitmix64 — fast, well-distributed 64-bit mixing function. */

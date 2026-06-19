@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * Low-level format / erase of a removable device (DESTRUCTIVE, needs root).
  *
