@@ -52,7 +52,7 @@ Linux-only (uses `/sys`, `lsblk`, and block ioctls).
 
 ## Download (prebuilt, x86-64)
 
-Prebuilt artifacts are produced by CI (built on Ubuntu 22.04 → glibc 2.35, so
+Prebuilt artifacts are produced by CI (built on Ubuntu 24.04 → glibc 2.39, so
 they run on that and **newer** distros) and attached to each
 [GitHub Release](https://github.com/frebergguru/sdcard_checker/releases):
 

@@ -4,7 +4,7 @@ This archive contains a **ready-built** SD Card Checker for x86-64 GNU/Linux:
 the CLI, the GTK4 GUI, the privileged D-Bus mechanism, the polkit policy, and the
 desktop launcher + icon. No compiler or build step is needed.
 
-> Built on Ubuntu 22.04 (glibc 2.35). It runs on that and **newer** distributions.
+> Built on Ubuntu 24.04 (glibc 2.39). It runs on that and **newer** distributions.
 > Very old distributions (older glibc) are not supported — build from source for
 > those (see the project README).
 

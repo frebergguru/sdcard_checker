@@ -6,8 +6,10 @@ name: build-portable
 #   - sdcheck-<ver>-x86_64.tar.gz           prebuilt system install (CLI, GUI,
 #                                            mechanism, polkit, desktop/icon)
 #
-# Built in an Ubuntu 22.04 container (GTK4 needs >= 22.04), so glibc 2.35 is the
-# floor: runs on that and newer distros.
+# Built in an Ubuntu 24.04 container: the GUI uses GTK >= 4.12 APIs (GtkFileDialog,
+# gtk_css_provider_load_from_string) and GLib >= 2.74 (G_APPLICATION_DEFAULT_FLAGS),
+# which 22.04 is too old for. glibc 2.39 is therefore the floor: the artifacts run
+# on 24.04-era and newer distros.
 
 on:
   push:
@@ -21,7 +23,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ubuntu:22.04
+    container: ubuntu:24.04
     steps:
       - name: Install build dependencies
         run: |
@@ -31,13 +33,15 @@ jobs:
             build-essential cmake pkg-config git ca-certificates wget file \
             libgtk-4-dev libglib2.0-dev libpolkit-gobject-1-dev \
             desktop-file-utils librsvg2-bin librsvg2-common \
-            libgdk-pixbuf-2.0-0 libgdk-pixbuf2.0-bin gsettings-desktop-schemas \
-            patchelf
+            libgdk-pixbuf-2.0-0 gsettings-desktop-schemas patchelf
+          # gdk-pixbuf query-loaders tool: package was renamed across releases.
+          for p in libgdk-pixbuf-2.0-bin libgdk-pixbuf2.0-bin; do
+            apt-get install -y --no-install-recommends "$p" && break || true
+          done
 
-      # checkout@v4 runs on Node 20 (the current runtime). Keep actions on their
-      # latest majors so they use the newest supported Node.
+      # Pinned to current action majors (Node 24 runtime — no deprecation warnings).
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Mark workspace safe for git
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
@@ -80,7 +84,7 @@ jobs:
           ls -lh "${OUT}.tar.gz" *.AppImage
 
       - name: Upload workflow artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sdcheck-portable-${{ steps.ver.outputs.version }}
           path: |
@@ -90,7 +94,7 @@ jobs:
 
       - name: Attach to Release (tags only)
         if: github.ref_type == 'tag'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             *.AppImage
