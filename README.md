@@ -50,6 +50,26 @@ skipped with a message, and the rest still builds.
 
 Linux-only (uses `/sys`, `lsblk`, and block ioctls).
 
+## Download (prebuilt, x86-64)
+
+Prebuilt artifacts are produced by CI (built on Ubuntu 22.04 → glibc 2.35, so
+they run on that and **newer** distros) and attached to each
+[GitHub Release](https://github.com/frebergguru/sdcard_checker/releases):
+
+- **`SDCardChecker-<ver>-x86_64.AppImage`** — portable GTK4 GUI, zero install.
+  `chmod +x` it and run. On distros without libfuse2, run it with
+  `./SDCardChecker-*.AppImage --appimage-extract-and-run`. The safe test, device
+  listing, and info work fully; destructive operations elevate via a per-use
+  password prompt (a self-mounted AppImage can't register the system polkit/D-Bus
+  policy — install the archive below for smooth elevation).
+- **`sdcheck-<ver>-x86_64.tar.gz`** — prebuilt **system install**: CLI, GUI, the
+  root D-Bus mechanism, polkit policy, and desktop launcher/icon. Extract and run
+  `sudo ./install.sh`. This is what enables Tier-3 elevation (passwordless for the
+  `disk` group / one prompt per session). See the archive's own `README.md`.
+
+To build the AppImage yourself, see `packaging/appimage/build-appimage.sh`; the
+CI recipe is `.github/workflows/release.yml`. Or build from source:
+
 ## Build
 
 ```sh
