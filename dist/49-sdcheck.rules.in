@@ -1,0 +1,38 @@
+// polkit rules for sdcheck — installed to <datadir>/polkit-1/rules.d/.
+//
+// The GUI is unprivileged and runs the destructive work as
+//     pkexec @SDCHECK_HELPER_PATH@ helper <device|format> …
+// which polkit gates with the built-in action org.freedesktop.policykit.exec.
+// This rule tunes that gate for our helper specifically (matched by its
+// absolute program path, substituted at install time by CMake):
+//
+//   * Members of the "disk" group can already write raw block devices, so a
+//     password prompt would be security theatre — they are allowed outright.
+//   * Any other local, active user must authenticate as an administrator, but
+//     only ONCE per session (AUTH_ADMIN_KEEP caches the result) instead of on
+//     every test or erase.
+//   * Remote / inactive sessions fall through to the polkit default.
+//
+// Admins who want a stricter policy can edit this file (it is vendor-provided;
+// a copy in /etc/polkit-1/rules.d/ with the same or lower-sorting name wins).
+// For example, to allow ONLY the "disk" group, replace the body with a check
+// that returns polkit.Result.NO for everyone else.
+
+polkit.addRule(function(action, subject) {
+    // Tier 1/2 path: the GUI runs `pkexec <helper> …` (exec action), matched by
+    // the helper's absolute program path.
+    var is_pkexec = (action.id === "org.freedesktop.policykit.exec" &&
+                     action.lookup("program") === "@SDCHECK_HELPER_PATH@");
+    // Tier 3 path: the GUI calls the D-Bus mechanism, which checks this action.
+    var is_mechanism = (action.id === "org.sdcheck.manage-device");
+
+    if (!is_pkexec && !is_mechanism)
+        return;
+    if (!subject.local || !subject.active)
+        return;                                  // fall through to the default
+
+    if (subject.isInGroup("disk"))
+        return polkit.Result.YES;                // already has raw-device access
+
+    return polkit.Result.AUTH_ADMIN_KEEP;        // admin password, once per session
+});

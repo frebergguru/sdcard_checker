@@ -1,0 +1,13 @@
+# Build output
+/build/
+build/
+
+# Editor / OS cruft
+*.swp
+*~
+.DS_Store
+
+# Local test artifacts
+*.img
+*.o
+*.a

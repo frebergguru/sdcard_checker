@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.sdcheck.Mechanism
+Exec=@SDCHECK_MECHANISM_PATH@
+User=root

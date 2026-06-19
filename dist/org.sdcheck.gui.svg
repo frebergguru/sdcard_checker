@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e7ecf3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- rounded-square app background -->
+  <rect x="16" y="16" width="224" height="224" rx="50" fill="url(#bg)"/>
+
+  <!-- SD card body: classic notched (chamfered) top-left corner -->
+  <path d="M 78 96 L 104 64 L 168 64 L 168 192 L 78 192 Z"
+        fill="url(#card)" stroke="#94a3b8" stroke-width="3"
+        stroke-linejoin="round"/>
+
+  <!-- contact pins -->
+  <g fill="#f4b400">
+    <rect x="92"  y="80" width="9" height="22" rx="3"/>
+    <rect x="107" y="80" width="9" height="22" rx="3"/>
+    <rect x="122" y="80" width="9" height="22" rx="3"/>
+    <rect x="137" y="80" width="9" height="22" rx="3"/>
+    <rect x="152" y="80" width="9" height="22" rx="3"/>
+  </g>
+
+  <!-- "verified genuine" check badge -->
+  <circle cx="178" cy="178" r="40" fill="#22a447" stroke="#ffffff" stroke-width="6"/>
+  <path d="M 160 179 L 173 192 L 198 164"
+        fill="none" stroke="#ffffff" stroke-width="11"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

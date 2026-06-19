@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=SD Card Checker
+GenericName=Flash Storage Tester
+Comment=Spot fake-capacity SD/USB cards, measure speed, and format
+Exec=sdcheck-gui
+Icon=org.sdcheck.gui
+Terminal=false
+Categories=Utility;
+Keywords=SD;card;flash;USB;fake;capacity;format;exFAT;benchmark;
+StartupNotify=true
+StartupWMClass=org.sdcheck.gui

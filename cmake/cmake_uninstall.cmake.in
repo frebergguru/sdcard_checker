@@ -1,0 +1,27 @@
+# Removes every file recorded in install_manifest.txt (created by `cmake --install`).
+# Run with:  sudo cmake --build build --target uninstall
+set(manifest "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+
+if(NOT EXISTS "${manifest}")
+    message(WARNING
+        "No install manifest at ${manifest} — nothing was installed from this "
+        "build directory (or it was already removed). Nothing to do.")
+    return()
+endif()
+
+file(STRINGS "${manifest}" files)
+foreach(file ${files})
+    set(path "$ENV{DESTDIR}${file}")
+    if(IS_SYMLINK "${path}" OR EXISTS "${path}")
+        message(STATUS "Removing ${path}")
+        file(REMOVE "${path}")
+        if(EXISTS "${path}")
+            message(FATAL_ERROR "Failed to remove ${path} (need sudo?)")
+        endif()
+    else()
+        message(STATUS "Already gone: ${path}")
+    endif()
+endforeach()
+
+message(STATUS "Uninstall complete. (Empty directories such as "
+        "<libexec>/sdcheck are left in place; remove them by hand if you wish.)")

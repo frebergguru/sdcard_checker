@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>sdcheck</vendor>
+  <vendor_url>https://example.invalid/sdcheck</vendor_url>
+
+  <action id="org.sdcheck.manage-device">
+    <description>Test or erase a removable storage device</description>
+    <message>Authentication is required to test or erase a removable card</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <!-- local, active session: one administrator prompt, cached per session -->
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+  </action>
+</policyconfig>
