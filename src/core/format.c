@@ -88,8 +88,8 @@ static int zero_fill(int fd, uint64_t size, sdcheck_progress_cb cb,
 
     sdcheck_rate_finish(&wrate);
     result->avg_write_bps = sdcheck_rate_avg(&wrate);
-    result->min_write_bps = wrate.min_bps;
-    result->max_write_bps = wrate.max_bps;
+    result->min_write_bps = sdcheck_rate_min(&wrate);
+    result->max_write_bps = sdcheck_rate_max(&wrate);
     result->speed_class   = sdcheck_speed_class_from_bps(result->avg_write_bps);
     return 0;
 }

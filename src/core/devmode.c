@@ -210,11 +210,11 @@ static int probe_quick(int fd, uint64_t announced, uint64_t seed,
     sdcheck_rate_finish(&rrate);
     result->announced_bytes = announced;
     result->avg_write_bps = sdcheck_rate_avg(&wrate);
-    result->min_write_bps = wrate.min_bps;
-    result->max_write_bps = wrate.max_bps;
+    result->min_write_bps = sdcheck_rate_min(&wrate);
+    result->max_write_bps = sdcheck_rate_max(&wrate);
     result->avg_read_bps  = sdcheck_rate_avg(&rrate);
-    result->min_read_bps  = rrate.min_bps;
-    result->max_read_bps  = rrate.max_bps;
+    result->min_read_bps  = sdcheck_rate_min(&rrate);
+    result->max_read_bps  = sdcheck_rate_max(&rrate);
     result->speed_class   = sdcheck_speed_class_from_bps(result->avg_write_bps);
 
     if (bad_count == 0) {
@@ -314,11 +314,11 @@ static int probe_full(int fd, uint64_t announced, uint64_t seed,
     sdcheck_rate_finish(&rrate);
     result->announced_bytes = announced;
     result->avg_write_bps = sdcheck_rate_avg(&wrate);
-    result->min_write_bps = wrate.min_bps;
-    result->max_write_bps = wrate.max_bps;
+    result->min_write_bps = sdcheck_rate_min(&wrate);
+    result->max_write_bps = sdcheck_rate_max(&wrate);
     result->avg_read_bps  = sdcheck_rate_avg(&rrate);
-    result->min_read_bps  = rrate.min_bps;
-    result->max_read_bps  = rrate.max_bps;
+    result->min_read_bps  = sdcheck_rate_min(&rrate);
+    result->max_read_bps  = sdcheck_rate_max(&rrate);
     result->speed_class   = sdcheck_speed_class_from_bps(result->avg_write_bps);
 
     if (result->bad_bytes == 0) {

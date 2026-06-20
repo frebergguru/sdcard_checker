@@ -104,8 +104,19 @@ static inline void sdcheck_rate_init(sdcheck_rate *r)
     r->have_window = 0;
 }
 
-/* Turn the accumulated window into one min/max sample and reset it. */
-static inline void sdcheck_rate_flush_window(sdcheck_rate *r)
+/*
+ * Fold the current window into the min/max sustained rate and the live readout.
+ *
+ * `complete` marks a window that actually reached SDCHECK_RATE_WINDOW bytes and
+ * was synced to media by the caller's per-window fdatasync. Only those windows
+ * are reliable, so only those move min/max. The trailing remainder flushed by
+ * sdcheck_rate_finish() is a sub-window below the reliable size whose bytes were
+ * never synced before the clock was read, so it clocks in at page-cache speed
+ * (tens of GB/s); folding it into max produced a phantom multi-GB/s spike. It
+ * still updates last_bps (live readout) and already counts toward the average
+ * via total_bytes/total_secs, but it must not touch min/max.
+ */
+static inline void sdcheck_rate_flush_window(sdcheck_rate *r, int complete)
 {
     if (r->win_bytes == 0 || r->win_secs <= 1e-6) {
         r->win_bytes = 0;
@@ -114,12 +125,14 @@ static inline void sdcheck_rate_flush_window(sdcheck_rate *r)
     }
     double bps = (double)r->win_bytes / r->win_secs;
     r->last_bps = bps;
-    if (!r->have_window) {
-        r->min_bps = r->max_bps = bps;
-        r->have_window = 1;
-    } else {
-        if (bps < r->min_bps) r->min_bps = bps;
-        if (bps > r->max_bps) r->max_bps = bps;
+    if (complete) {
+        if (!r->have_window) {
+            r->min_bps = r->max_bps = bps;
+            r->have_window = 1;
+        } else {
+            if (bps < r->min_bps) r->min_bps = bps;
+            if (bps > r->max_bps) r->max_bps = bps;
+        }
     }
     r->win_bytes = 0;
     r->win_secs = 0.0;
@@ -132,18 +145,34 @@ static inline void sdcheck_rate_add(sdcheck_rate *r, uint64_t bytes, double secs
     r->win_bytes += bytes;
     r->win_secs += secs;
     if (r->win_bytes >= SDCHECK_RATE_WINDOW)
-        sdcheck_rate_flush_window(r);
+        sdcheck_rate_flush_window(r, 1);  /* complete, synced window */
 }
 
-/* Flush any trailing partial window so short tests still report a min/max. */
+/* Flush the trailing partial window. It refreshes the live readout but, being an
+ * unsynced sub-window, does not contribute to min/max (see flush_window). */
 static inline void sdcheck_rate_finish(sdcheck_rate *r)
 {
-    sdcheck_rate_flush_window(r);
+    sdcheck_rate_flush_window(r, 0);
 }
 
 static inline double sdcheck_rate_avg(const sdcheck_rate *r)
 {
     return r->total_secs > 1e-9 ? (double)r->total_bytes / r->total_secs : 0.0;
+}
+
+/*
+ * Min/max sustained rate over complete (synced) windows. A test too short to
+ * complete even one full window has no reliable spread to report, so fall back
+ * to the average rather than emitting a bogus 0 or a cache-speed spike.
+ */
+static inline double sdcheck_rate_min(const sdcheck_rate *r)
+{
+    return r->have_window ? r->min_bps : sdcheck_rate_avg(r);
+}
+
+static inline double sdcheck_rate_max(const sdcheck_rate *r)
+{
+    return r->have_window ? r->max_bps : sdcheck_rate_avg(r);
 }
 
 /*
