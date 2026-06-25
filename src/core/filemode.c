@@ -109,6 +109,7 @@ int sdcheck_run_file(const char *mountpoint,
 
             double t0 = sdcheck_now();
             ssize_t w = write(fd, wbuf, want);
+            int werr = errno;   /* capture before any intervening syscall clobbers it */
             if (w > 0) {
                 /* Force a window's worth of data to the card before stopping
                    the clock, so the rate reflects media speed, not the copy
@@ -122,7 +123,7 @@ int sdcheck_run_file(const char *mountpoint,
             double dt = sdcheck_now() - t0;
 
             if (w < 0) {
-                if (errno == ENOSPC) { disk_full = 1; break; }
+                if (werr == ENOSPC) { disk_full = 1; break; }
                 close(fd);
                 rc = fail(result, "Write error during test.");
                 goto done;

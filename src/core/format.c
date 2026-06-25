@@ -182,6 +182,20 @@ static int run_mkfs(const char *devnode, const char *type, sdcheck_result *resul
     char prog[24];
     snprintf(prog, sizeof(prog), "mkfs.%s", type);
 
+    /* Per-filesystem flags. When the target is a whole disk (superfloppy, no
+       partition table), mkfs.ext* and mkfs.ntfs print a "this is the entire
+       device — proceed? (y,N)" prompt and read the answer from stdin; with no
+       tty they abort, so we pass a force flag. mkfs.ntfs additionally defaults
+       to a full zero + bad-block scan, needlessly slow on a card we just
+       erased/verified, so request a quick format. Harmless on a partition. */
+    const char *flag1 = NULL, *flag2 = NULL;
+    if (!strcmp(type, "ext4") || !strcmp(type, "ext2")) {
+        flag1 = "-F";                     /* force past the whole-device prompt */
+    } else if (!strcmp(type, "ntfs")) {
+        flag1 = "-Q";                     /* quick format (no full zero/scan)   */
+        flag2 = "-F";                     /* force whole-device                 */
+    }
+
     pid_t pid = fork();
     if (pid < 0) {
         snprintf(result->message + strlen(result->message),
@@ -190,12 +204,21 @@ static int run_mkfs(const char *devnode, const char *type, sdcheck_result *resul
         return -1;
     }
     if (pid == 0) {
-        /* child: silence output, then exec; "--" stops option parsing. */
+        /* child: silence output and detach stdin (so a stray prompt sees EOF
+           rather than stealing bytes from our cancel pipe), then exec. */
         int devnull = open("/dev/null", O_WRONLY);
         if (devnull >= 0) { dup2(devnull, STDOUT_FILENO); dup2(devnull, STDERR_FILENO); }
+        int devnull_r = open("/dev/null", O_RDONLY);
+        if (devnull_r >= 0) dup2(devnull_r, STDIN_FILENO);
         /* devnode is always an absolute /dev/... path from our enumeration, so
            it can't be mistaken for an option flag. */
-        char *const args[] = { prog, (char *)devnode, NULL };
+        char *args[5];
+        int n = 0;
+        args[n++] = prog;
+        if (flag1) args[n++] = (char *)flag1;
+        if (flag2) args[n++] = (char *)flag2;
+        args[n++] = (char *)devnode;
+        args[n] = NULL;
         execvp(prog, args);
         _exit(127);            /* exec failed (mkfs.<type> not installed) */
     }

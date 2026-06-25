@@ -78,7 +78,7 @@ typedef struct {
     /* Remembered request so we can fall back to pkexec if the mechanism is
        not installed on this system. */
     struct {
-        char     op[8];        /* "device" | "format"                   */
+        char     op[8];        /* "device" | "format" | "auto" | "file" */
         char     node[64];
         gboolean full;         /* device: full-surface write+verify     */
         int      passes;       /* device: stress passes                 */
@@ -464,6 +464,7 @@ static void begin_ui(App *a)
 {
     a->cancel = 0;
     a->running = 1;
+    a->hres_got = 0;   /* no valid result yet; stops "Save report" emitting a stale one */
     gtk_widget_set_sensitive(GTK_WIDGET(a->info_btn),   FALSE);
     gtk_widget_set_sensitive(GTK_WIDGET(a->file_btn),   FALSE);
     gtk_widget_set_sensitive(GTK_WIDGET(a->device_btn), FALSE);

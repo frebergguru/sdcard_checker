@@ -27,6 +27,20 @@ sudo ./install.sh        # installs to /usr; uninstall with sudo ./uninstall.sh
 
 ---
 
+## Fixes in this build
+
+- **Whole-device ext4/ext2/NTFS format now works.** Formatting a card without a
+  partition table (filesystem written straight to the device) previously aborted
+  for these types, because `mkfs` prompts before writing to a whole disk and the
+  prompt was never answered. It is now forced through; NTFS also uses a quick
+  format instead of a slow full zero-fill.
+- **Full cards are reported cleanly** in the safe file test, instead of
+  occasionally surfacing as a generic "write error".
+- **GUI: "Save report"** no longer risks writing a previous run's result after a
+  cancelled or denied operation.
+
+---
+
 **Which one?** Grab the **AppImage** for a quick, no-install GUI. Install the
 **tar.gz** for the complete, properly-integrated experience. Full command
 reference: see the [project README](https://github.com/frebergguru/sdcard_checker#readme).
